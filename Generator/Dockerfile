@@ -1,12 +1,11 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
 WORKDIR /src
-COPY ["Generator.csproj", "Generator/"]
-RUN dotnet restore "Generator/Generator.csproj"
+COPY . .
+RUN dotnet restore "Generator.csproj"
 
-COPY . Generator/.
-RUN dotnet publish -c Release -o /app Generator/Generator.csproj 
+RUN dotnet publish -c Release -o /app Generator.csproj
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS publish
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-focal AS publish
 WORKDIR /app
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "Generator.dll"]

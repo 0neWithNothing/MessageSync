@@ -17,7 +17,7 @@ namespace Executor
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=messagesync;Username=postgres;Password=postgres");
+            optionsBuilder.UseNpgsql("Host=my-postgres;Port=5432;Database=messagesync;Username=postgres;Password=postgres");
         }
     }
 }

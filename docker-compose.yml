@@ -7,8 +7,8 @@ services:
      - "5672:5672"
      - "15672:15672"
      - "15692:15692"
-  postgres:
-    image: postgres:13.3
+  my-postgres:
+    image: postgres:latest
     environment:
         POSTGRES_DB: "messagesync"
         POSTGRES_USER: "postgres"
@@ -17,13 +17,24 @@ services:
         - "5432:5432"  
   generator:
     build:
-      context: .
-      dockerfile: /Generator/Dockerfile
+      context: ./Generator
+      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    deploy:
+      mode: replicated
+      replicas: 2
+    depends_on:
+      "executor":
+        condition: service_started
   executor:
     build:
-      context: .
-      dockerfile: /Executor/Dockerfile
+      context: ./Executor
+      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      "my-postgres":
+        condition: service_started
+      "rabbitmq":
+        condition: service_started

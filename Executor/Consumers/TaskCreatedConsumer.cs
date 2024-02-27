@@ -59,6 +59,7 @@ namespace Executor.Consumers
             if (tasksCount == generatorsCount * 10)
             {
                 _logger.LogInformation("Все 10 задач были выполнены");
+                _context.Database.EnsureDeleted();
             }
 
             return Task.CompletedTask;
