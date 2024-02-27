@@ -1,0 +1,29 @@
+version: "3.6"
+
+services:
+  rabbitmq:
+    image: masstransit/rabbitmq:latest
+    ports:
+     - "5672:5672"
+     - "15672:15672"
+     - "15692:15692"
+  postgres:
+    image: postgres:13.3
+    environment:
+        POSTGRES_DB: "messagesync"
+        POSTGRES_USER: "postgres"
+        POSTGRES_PASSWORD: "postgres"
+    ports:
+        - "5432:5432"  
+  generator:
+    build:
+      context: .
+      dockerfile: /Generator/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+  executor:
+    build:
+      context: .
+      dockerfile: /Executor/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

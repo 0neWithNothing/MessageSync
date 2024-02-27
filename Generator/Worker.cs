@@ -42,7 +42,7 @@ namespace Generator
                 int index = random.Next(taskMessages.Count);
                 TaskCreated taskMessage = taskMessages[index];
                 await _bus.Publish(taskMessage, stoppingToken);
-                int timeout = 0;
+                int timeout = random.Next(1, 5);
                 _logger.LogInformation($"Время - {DateTime.UtcNow}, номер задачи - {taskMessage.Number}, сек. до след. запроса - {timeout}");
                 taskMessages.RemoveAt(index);
 

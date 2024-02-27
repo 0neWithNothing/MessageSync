@@ -1,15 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MassTransit;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Executor
 {
     public class Program
     {
+        static bool? _isRunningInContainer;
+
+        static bool IsRunningInContainer =>
+            _isRunningInContainer ??= bool.TryParse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), out var inContainer) && inContainer;
+   
         public static async Task Main(string[] args)
         {
             var app = CreateHostBuilder(args).Build();
@@ -31,6 +37,8 @@ namespace Executor
                 {
                     services.AddMassTransit(x =>
                     {
+                        x.AddDelayedMessageScheduler();
+
                         x.SetKebabCaseEndpointNameFormatter();
 
                         // By default, sagas are in-memory, but should be changed to a durable
@@ -46,11 +54,11 @@ namespace Executor
 
                         x.UsingRabbitMq((context, cfg) =>
                         {
-                            cfg.Host("localhost", "/", h => {
-                                h.Username("guest");
-                                h.Password("guest");
-                            });
+                            if (IsRunningInContainer)
+                                cfg.Host("rabbitmq");
 
+                            cfg.UseDelayedMessageScheduler();
+                            
                             cfg.ConfigureEndpoints(context);
                         });
                     });
