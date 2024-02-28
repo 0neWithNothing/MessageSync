@@ -33,7 +33,26 @@ namespace Executor.Consumers
         public Task Consume(ConsumeContext<TaskCreated> context)
         {
             var gen = _context.Generators.FirstOrDefault(g=>g.Id == context.Message.GeneratorId);
-            TaskDb newTask = new TaskDb { Generator=gen, Number=context.Message.Number, Data=context.Message.Data };
+            //TaskDb newTask;
+            //if (gen == null)
+            //{
+            //    var newGen = new GeneratorDb { Id = context.Message.GeneratorId };
+            //    _context.Generators.Add(newGen);
+            //    _context.SaveChanges();
+            //    newTask = new TaskDb { Generator = gen, Number = context.Message.Number, Data = context.Message.Data };
+            //    _context.Tasks.Add(newTask);
+            //} else
+            //{
+            //    newTask = new TaskDb { Generator = gen, Number = context.Message.Number, Data = context.Message.Data };
+            //    _context.Tasks.Add(newTask);
+            //}
+            //_context.SaveChanges();
+
+            if (gen == null)
+            {
+                throw new Exception("Very bad things happened");
+            }
+            TaskDb newTask = new TaskDb { Generator = gen, Number = context.Message.Number, Data = context.Message.Data };
             _context.Tasks.Add(newTask);
             _context.SaveChanges();
 

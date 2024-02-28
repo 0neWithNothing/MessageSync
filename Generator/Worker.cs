@@ -27,7 +27,6 @@ namespace Generator
         {
             await _bus.Publish(new GeneratorInfoSent { Date = DateTime.UtcNow, Id = _id }, stoppingToken);
 
-            //Console.ReadLine();
             List<TaskCreated> taskMessages = new List<TaskCreated>();
 
             for (int i = 1; i != 11; i++) 
