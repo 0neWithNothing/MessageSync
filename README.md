@@ -5,5 +5,5 @@ Generator рализовал с помощью masstranist worker, а Executor �
     deploy:
       mode: replicated
       replicas: 1
-``` <br/>
+```
 Смотрю логи через docker desctop
