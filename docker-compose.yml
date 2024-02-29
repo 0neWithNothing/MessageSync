@@ -38,6 +38,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    deploy:
+      mode: replicated
+      replicas: 1
     depends_on:
       "my-postgres":
         condition: service_started
