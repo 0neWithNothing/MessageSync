@@ -2,7 +2,7 @@ using System;
 
 namespace Contracts
 {
-    public record GeneratorInfoSent
+    public record GeneratorStarted
     {
         public DateTime Date { get; init; }
         public Guid Id { get; init; }

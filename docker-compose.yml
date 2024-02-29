@@ -2,11 +2,16 @@ version: "3.6"
 
 services:
   rabbitmq:
-    image: masstransit/rabbitmq:latest
+    image: rabbitmq:3-management
     ports:
      - "5672:5672"
      - "15672:15672"
      - "15692:15692"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 3s
+      retries: 30
   my-postgres:
     image: postgres:latest
     environment:
@@ -23,7 +28,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 3
     depends_on:
       "executor":
         condition: service_started
@@ -37,4 +42,4 @@ services:
       "my-postgres":
         condition: service_started
       "rabbitmq":
-        condition: service_started
+        condition: service_healthy

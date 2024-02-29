@@ -9,8 +9,8 @@ using System;
 namespace Executor.Consumers
 {
     public class TaskCreatedConsumer :
-        IConsumer<TaskCreated>,
-        IConsumer<GeneratorInfoSent>
+        IConsumer<TaskCreated>
+        //IConsumer<GeneratorStarted>
     {
         readonly ILogger<TaskCreatedConsumer> _logger;
         readonly ApplicationContext _context;
@@ -21,37 +21,16 @@ namespace Executor.Consumers
             _context = context;
         }
 
-        public Task Consume(ConsumeContext<GeneratorInfoSent> context)
-        {
-            GeneratorDb newGenerator = new GeneratorDb { Id = context.Message.Id, Date = context.Message.Date };
-            _context.Generators.Add(newGenerator);
-            _context.SaveChanges();
-            _logger.LogInformation($"Generator - {newGenerator.Id} added to db");
-            return Task.CompletedTask;
-        }
 
         public Task Consume(ConsumeContext<TaskCreated> context)
         {
             var gen = _context.Generators.FirstOrDefault(g=>g.Id == context.Message.GeneratorId);
-            //TaskDb newTask;
-            //if (gen == null)
-            //{
-            //    var newGen = new GeneratorDb { Id = context.Message.GeneratorId };
-            //    _context.Generators.Add(newGen);
-            //    _context.SaveChanges();
-            //    newTask = new TaskDb { Generator = gen, Number = context.Message.Number, Data = context.Message.Data };
-            //    _context.Tasks.Add(newTask);
-            //} else
-            //{
-            //    newTask = new TaskDb { Generator = gen, Number = context.Message.Number, Data = context.Message.Data };
-            //    _context.Tasks.Add(newTask);
-            //}
-            //_context.SaveChanges();
 
             if (gen == null)
             {
-                throw new Exception("Very bad things happened");
+                throw new Exception($"Generator {context.Message.GeneratorId} - not in DB");
             }
+
             TaskDb newTask = new TaskDb { Generator = gen, Number = context.Message.Number, Data = context.Message.Data };
             _context.Tasks.Add(newTask);
             _context.SaveChanges();

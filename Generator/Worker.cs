@@ -25,16 +25,18 @@ namespace Generator
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await _bus.Publish(new GeneratorInfoSent { Date = DateTime.UtcNow, Id = _id }, stoppingToken);
+            await Task.Delay(3000, stoppingToken);
+            await _bus.Publish(new GeneratorStarted { Date = DateTime.UtcNow, Id = _id }, stoppingToken);
+
 
             List<TaskCreated> taskMessages = new List<TaskCreated>();
 
-            for (int i = 1; i != 11; i++) 
+            for (int i = 1; i != 11; i++)
             {
-                TaskCreated taskMessage = new TaskCreated { Number=i, GeneratorId = _id, Data=random.Next(1, 100) };
+                TaskCreated taskMessage = new TaskCreated { Number = i, GeneratorId = _id, Data = random.Next(1, 100) };
                 taskMessages.Add(taskMessage);
             }
-            _logger.LogInformation(string.Join("\r\n", taskMessages.ConvertAll(t=>t.ToString())));
+            _logger.LogInformation(string.Join("\r\n", taskMessages.ConvertAll(t => t.ToString())));
 
             while (taskMessages.Count != 0)
             {
@@ -45,11 +47,8 @@ namespace Generator
                 _logger.LogInformation($"Время - {DateTime.UtcNow}, номер задачи - {taskMessage.Number}, сек. до след. запроса - {timeout}");
                 taskMessages.RemoveAt(index);
 
-                await Task.Delay(timeout*1000, stoppingToken);
+                await Task.Delay(timeout * 1000, stoppingToken);
             }
-
-            
-
         }
     }
 }

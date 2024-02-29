@@ -18,8 +18,12 @@ namespace Executor
 
         public void Run()
         {
-            _context.Database.EnsureDeleted();
-            _context.Database.EnsureCreated();
+            if (!_context.Database.CanConnect())
+            {
+                _context.Database.EnsureDeleted();
+                _context.Database.EnsureCreated();
+            }
+            
         }
     }
 }
