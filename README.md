@@ -7,3 +7,5 @@ Generator рализовал с помощью masstranist worker, а Executor �
       replicas: 1
 ```
 Смотрю логи через docker desctop
+
+f
